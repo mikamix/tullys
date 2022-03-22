@@ -2,6 +2,7 @@ require "csv"
 require "barby/barcode/code_128"
 require "barby/outputter/png_outputter"
 require "digest"
+require "fileutils"
 
 namespace :generate do
   desc "URLを生成する"
@@ -23,6 +24,21 @@ namespace :generate do
       output = "output/barcode/#{digest}"
 
       Dir.mkdir(output) unless Dir.exist?(output)
+      File.open("#{output}/barcode.png", "wb") do |f|
+        f.write(barcode.to_png)
+      end
+    end
+  end
+
+  desc "HTMLとバーコードを生成する"
+  task :html, ["csv"] => :environment do |_task, args|
+    IO.readlines(args[:csv], chomp: true).each_with_index do |content, n|
+      barcode = Barby::Code128B.new(content)
+      digest = Digest::SHA256.hexdigest("tullys#{n}")
+      output = "public/tullys/#{digest}"
+
+      Dir.mkdir(output) unless Dir.exist?(output)
+      FileUtils.cp("public/index.html", output)
       File.open("#{output}/barcode.png", "wb") do |f|
         f.write(barcode.to_png)
       end
