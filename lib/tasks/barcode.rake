@@ -23,7 +23,7 @@ namespace :generate do
       digest = Digest::SHA256.hexdigest("tullys#{n}")
       output = "output/barcode/#{digest}"
 
-      Dir.mkdir(output) unless Dir.exist?(output)
+      FileUtils.mkdir_p(output)
       File.open("#{output}/barcode.png", "wb") do |f|
         f.write(barcode.to_png)
       end
@@ -37,7 +37,7 @@ namespace :generate do
       digest = Digest::SHA256.hexdigest("tullys#{n}")
       output = "public/tullys/#{digest}"
 
-      Dir.mkdir(output) unless Dir.exist?(output)
+      FileUtils.mkdir_p(output)
       FileUtils.cp("public/index.html", output)
       File.open("#{output}/barcode.png", "wb") do |f|
         f.write(barcode.to_png)
