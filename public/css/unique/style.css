@@ -75,13 +75,20 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   
   .mv img {
   z-index: 1;
-  margin-top: -75%;
+  margin-top: -78%;
   }
   
     .tickets img {
   z-index: 10;
   }
 
+    .tickets p {
+    z-index: 10;
+    display: block;
+    text-align: center;
+    background-color: #ffffff;
+    padding-bottom: 12px;
+  }
 
 /*!
  * Hamburgers

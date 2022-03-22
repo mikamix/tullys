@@ -605,6 +605,7 @@ li.c-nav-parent:hover .p-nav-list-sub{
 .p-footer-menu__list li {
 	font-size: 3.733vw;
 	margin:0 0 1em;
+	text-align: center;
 }
 .p-copyright {
 	padding: 4vw 6.4vw;
