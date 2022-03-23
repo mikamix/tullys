@@ -8,6 +8,8 @@
 /output
 .DS_Store
 /public/tullys
+/public/barcode/*
+!/public/barcode/.keep
 
 # Ignore bundler config.
 /.bundle

@@ -1,5 +1,5 @@
 require "csv"
-require 'barby/barcode/ean_13'
+require "barby/barcode/ean_13"
 require "barby/outputter/png_outputter"
 require "digest"
 require "fileutils"
@@ -32,7 +32,10 @@ namespace :generate do
     IO.readlines(args[:csv], chomp: true).each_with_index do |content, n|
       p n
       FileUtils.mkdir_p(output(n))
-      FileUtils.cp("public/index.html", output(n))
+      buffer = File.read("public/index.html")
+        .gsub("XXXXXXXXXXXXX", content)
+        .gsub("YYYYYYYYYYYYY", digest(n))
+      File.write("#{output(n)}/index.html", buffer)
     end
   end
 
@@ -40,8 +43,7 @@ namespace :generate do
   task :barcode, ["csv"] => :environment do |_task, args|
     IO.readlines(args[:csv], chomp: true).each_with_index do |content, n|
       p n
-      FileUtils.mkdir_p(output(n))
-      File.open("#{output(n)}/barcode.png", "wb") do |f|
+      File.open("public/barcode/#{digest(n)}.png", "wb") do |f|
         f.write(barcode(content))
       end
     end
