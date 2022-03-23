@@ -24,25 +24,22 @@ namespace :generate do
     end
   end
 
-  desc "バーコードを生成する"
-  task :barcode, ["csv"] => :environment do |_task, args|
-    IO.readlines(args[:csv], chomp: true).each_with_index do |content, n|
-      p n
-      output = "output/barcode/#{digest(n)}"
-      FileUtils.mkdir_p(output)
-      File.open("#{output}/barcode.png", "wb") do |f|
-        f.write(barcode(content))
-      end
-    end
-  end
-
-  desc "HTMLとバーコードを生成する"
+  desc "HTMLを生成する"
   task :html, ["csv"] => :environment do |_task, args|
     IO.readlines(args[:csv], chomp: true).each_with_index do |content, n|
       p n
       output = "public/tullys/#{digest(n)}"
       FileUtils.mkdir_p(output)
       FileUtils.cp("public/index.html", output)
+    end
+  end
+
+  desc "バーコードを生成する"
+  task :barcode, ["csv"] => :environment do |_task, args|
+    IO.readlines(args[:csv], chomp: true).each_with_index do |content, n|
+      p n
+      output = "public/tullys/#{digest(n)}"
+      FileUtils.mkdir_p(output)
       File.open("#{output}/barcode.png", "wb") do |f|
         f.write(barcode(content))
       end
