@@ -1,5 +1,4 @@
 require "csv"
-require "barby/barcode/code_128"
 require 'barby/barcode/ean_13'
 require "barby/outputter/png_outputter"
 require "digest"
@@ -12,6 +11,10 @@ namespace :generate do
 
   def barcode(content)
     Barby::EAN13.new(content.chop).to_png(xdim: 2)
+  end
+
+  def output(n)
+    "public/tullys/#{digest(n)}"
   end
 
   desc "URLを生成する"
@@ -28,19 +31,17 @@ namespace :generate do
   task :html, ["csv"] => :environment do |_task, args|
     IO.readlines(args[:csv], chomp: true).each_with_index do |content, n|
       p n
-      output = "public/tullys/#{digest(n)}"
-      FileUtils.mkdir_p(output)
-      FileUtils.cp("public/index.html", output)
+      FileUtils.mkdir_p(output(n))
+      FileUtils.cp("public/index.html", output(n))
     end
   end
 
   desc "バーコードを生成する"
   task :barcode, ["csv"] => :environment do |_task, args|
-    IO.readlines(args[:csv], chomp: true).each_with_index do |content, n|
+    IO.readlines(args[:csv], chomp: true).take(3).each_with_index do |content, n|
       p n
-      output = "public/tullys/#{digest(n)}"
-      FileUtils.mkdir_p(output)
-      File.open("#{output}/barcode.png", "wb") do |f|
+      FileUtils.mkdir_p(output(n))
+      File.open("#{output(n)}/barcode.png", "wb") do |f|
         f.write(barcode(content))
       end
     end
