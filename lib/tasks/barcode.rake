@@ -38,7 +38,7 @@ namespace :generate do
 
   desc "バーコードを生成する"
   task :barcode, ["csv"] => :environment do |_task, args|
-    IO.readlines(args[:csv], chomp: true).take(3).each_with_index do |content, n|
+    IO.readlines(args[:csv], chomp: true).each_with_index do |content, n|
       p n
       FileUtils.mkdir_p(output(n))
       File.open("#{output(n)}/barcode.png", "wb") do |f|
