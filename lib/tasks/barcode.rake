@@ -10,7 +10,7 @@ namespace :generate do
   end
 
   def barcode(content)
-    Barby::EAN13.new(content.chop).to_png(xdim: 2)
+    Barby::EAN13.new(content.chop).to_png(xdim: 20, height: 1000, margin: 100)
   end
 
   def output(n)
@@ -30,7 +30,7 @@ namespace :generate do
   desc "HTMLを生成する"
   task :html, ["csv"] => :environment do |_task, args|
     IO.readlines(args[:csv], chomp: true).each_with_index do |content, n|
-      p n
+      p "#{n}: #{digest(n)}"
       FileUtils.mkdir_p(output(n))
       buffer = File.read("public/index.html")
         .gsub("XXXXXXXXXXXXX", content)
@@ -42,7 +42,7 @@ namespace :generate do
   desc "バーコードを生成する"
   task :barcode, ["csv"] => :environment do |_task, args|
     IO.readlines(args[:csv], chomp: true).each_with_index do |content, n|
-      p n
+      p "#{n}: #{digest(n)}"
       File.open("public/barcode/#{digest(n)}.png", "wb") do |f|
         f.write(barcode(content))
       end
