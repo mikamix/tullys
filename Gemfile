@@ -6,6 +6,7 @@ ruby '2.7.5'
 gem 'barby'
 gem 'rqrcode'
 gem 'chunky_png'
+gem 'parallel'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.6'

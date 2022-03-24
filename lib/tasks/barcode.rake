@@ -3,6 +3,7 @@ require "barby/barcode/ean_13"
 require "barby/outputter/png_outputter"
 require "digest"
 require "fileutils"
+require "parallel"
 
 namespace :generate do
   def digest(index)
@@ -13,8 +14,12 @@ namespace :generate do
     Barby::EAN13.new(content.chop).to_png(xdim: 20, height: 1000, margin: 100)
   end
 
-  def output(n)
-    "public/tullys/#{digest(n)}"
+  def html_path(n)
+    "public/tullys/#{digest(n)}/index.html"
+  end
+
+  def barcode_path(n)
+    "public/barcode/#{digest(n)}.png"
   end
 
   desc "URLを生成する"
@@ -29,21 +34,23 @@ namespace :generate do
 
   desc "HTMLを生成する"
   task :html, ["csv"] => :environment do |_task, args|
-    IO.readlines(args[:csv], chomp: true).each_with_index do |content, n|
+    lines = IO.readlines(args[:csv], chomp: true)
+    Parallel.each_with_index(lines, in_processes: 8) do |content, n|
       p "#{n}: #{digest(n)}"
-      FileUtils.mkdir_p(output(n))
       buffer = File.read("public/index.html")
         .gsub("XXXXXXXXXXXXX", content)
         .gsub("YYYYYYYYYYYYY", digest(n))
-      File.write("#{output(n)}/index.html", buffer)
+      FileUtils.mkdir_p(File::dirname(html_path(n)))
+      File.write(html_path(n), buffer)
     end
   end
 
   desc "バーコードを生成する"
   task :barcode, ["csv"] => :environment do |_task, args|
-    IO.readlines(args[:csv], chomp: true).each_with_index do |content, n|
+    lines = IO.readlines(args[:csv], chomp: true)
+    Parallel.each_with_index(lines, in_processes: 8) do |content, n|
       p "#{n}: #{digest(n)}"
-      File.open("public/barcode/#{digest(n)}.png", "wb") do |f|
+      File.open(barcode_path(n), "wb") do |f|
         f.write(barcode(content))
       end
     end
